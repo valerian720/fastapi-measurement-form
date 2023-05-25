@@ -2,6 +2,7 @@ from typing import List
 from datetime import timedelta
 
 from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
@@ -13,6 +14,13 @@ from config import settings
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8080"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Dependency
 def get_db():
@@ -23,6 +31,9 @@ def get_db():
         db.close()
 
 # 
+@app.get("/")
+def index():
+    return {"data": "this is an api"}
 
 @app.post("/login/token/", response_model=schemas.Token)
 def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends(),db: Session= Depends(get_db)):
