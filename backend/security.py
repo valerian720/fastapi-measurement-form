@@ -5,9 +5,9 @@ from typing import Optional
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 
-from . import crud
-from .config import settings
-from .hashing import Hasher
+import crud
+from config import settings
+from hashing import Hasher
 
 def create_access_token(data: dict, expires_delta: Optional[timedelta] = None):
     to_encode = data.copy()

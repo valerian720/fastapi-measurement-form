@@ -4,6 +4,9 @@ FROM tiangolo/uvicorn-gunicorn-fastapi:latest
 RUN mkdir app
 WORKDIR /app
 
+ENV PATH="${PATH}:/root/.local/bin"
+RUN export PYTHONPATH=$PWD
+
 # install dependencies
 COPY ./requirements.txt /app
 RUN pip install --no-cache-dir --upgrade -r requirements.txt

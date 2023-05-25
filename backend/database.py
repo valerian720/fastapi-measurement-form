@@ -11,7 +11,7 @@ port=os.getenv("DATABASE_PORT")
 # sqlite
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
 # docker db
-SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}" # or "mysql+pymysql://db_username:user_password@localhost/test"
+SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{user}:{password}@{host}:{port}/{database}?charset=utf8mb4" # or "mysql+pymysql://db_username:user_password@localhost/test"
 # local db
 # SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root@localhost/test" # or "mysql+pymysql://db_username:user_password@localhost/test"
 

@@ -6,9 +6,9 @@ from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 
-from . import crud, models, schemas, security
-from .database import SessionLocal, engine
-from .config import settings
+import crud, models, schemas, security
+from database import SessionLocal, engine
+from config import settings
 
 models.Base.metadata.create_all(bind=engine)
 app = FastAPI()
