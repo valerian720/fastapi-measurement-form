@@ -1,0 +1,8 @@
+fastapi
+jose
+passlib
+pydantic
+python_jose
+SQLAlchemy
+pymysql
+cryptography

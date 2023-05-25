@@ -1,6 +1,7 @@
 FROM tiangolo/uvicorn-gunicorn-fastapi:latest
 
 # set the working directory
+RUN mkdir app
 WORKDIR /app
 
 # install dependencies
