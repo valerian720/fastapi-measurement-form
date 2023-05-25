@@ -1,1 +1,0 @@
-uvicorn notes_api.main:app --reload

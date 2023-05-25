@@ -7,12 +7,12 @@ user=os.environ.get("DATABASE_USERNAME")
 password=os.environ.get("DATABASE_PASSWORD")
 database = os.environ.get("DATABASE")
 host=os.getenv("DATABASE_HOST")
-
+# sqlite
 # SQLALCHEMY_DATABASE_URL = "sqlite:///./sql_app.db"
-# SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{username}@{host}/{database}" # or "mysql+pymysql://db_username:user_password@localhost/test"
+# docker db
 SQLALCHEMY_DATABASE_URL = f"mysql+pymysql://{user}:{password}@{host}/{database}" # or "mysql+pymysql://db_username:user_password@localhost/test"
-# SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root@localhost/test" # or "mysql+pymysql://db_username:user_password@localhost/test"
-# SQLALCHEMY_DATABASE_URL = "postgresql://user:password@postgresserver/db"
+# local db
+SQLALCHEMY_DATABASE_URL = "mysql+pymysql://root@localhost/test" # or "mysql+pymysql://db_username:user_password@localhost/test"
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL
