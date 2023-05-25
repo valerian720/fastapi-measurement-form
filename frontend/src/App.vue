@@ -1,6 +1,6 @@
 <template>
   <div class="col">
-    <nav><router-link to="/">Home</router-link></nav>
+    <nav><router-link to="/">Ввод данных</router-link> / <router-link to="/report">Отчет</router-link></nav>
     <router-view />
   </div>
 </template>
