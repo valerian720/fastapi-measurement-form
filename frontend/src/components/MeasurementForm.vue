@@ -1,10 +1,10 @@
 <template>
   <div class="row">
-    <div class="col col-lg-6 mx-auto">
+    <div class="col col-lg-7 mx-auto">
       <div class="card text-start">
         <div class="card-body">
           <h4 class="card-title">Ввод замеров</h4>
-          <div class="col m-1 p-1 help" title="Начните вводить данные / полностью окончите вводить данные">
+          <div class="col m-1 p-1 help" title="Начните вводить данные / полностью окончите вводить данные для того что бы все пропуски сами заполнились">
             Дата измерений:
             <u v-if="startedAtDateTime">{{
               startedAtDateTime.toLocaleDateString()
@@ -64,7 +64,16 @@
                 <tbody>
                   <tr v-for="(row, rowIndex) in table" v-bind:key="rowIndex">
                     <td scope="row" class="text-end">{{ rowIndex+1 }}</td>
-                    <td v-for="(cell, cellIndex) in row" v-bind:key="cellIndex">{{ cell.value }}</td>
+                    <td v-for="(cell, cellIndex) in row" v-bind:key="cellIndex">
+                          <input v-model="cell.value" @change="changeCellTimestamp(rowIndex, cellIndex)"
+                           min="0.01" 
+                           max="10" 
+                           step="0.01" 
+                           type="number" 
+                           class="form-control cell" 
+                           :title="createTMessage(cell.firstChanged, cell.lastChanged)"
+                           placeholder="x.xx">
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -84,7 +93,7 @@
               >
             </div>
             <div class="row">
-              <button type="button" class="btn btn-primary">сохранить</button>
+              <button type="button" class="btn btn-outline-primary col-2 mx-auto">сохранить</button>
             </div>
           </div>
         </div>
@@ -121,33 +130,67 @@ export default {
   },
   methods: {
     populateTable() {
-      console.log("123");
       for (let i = 0; i < this.rowCount; i++) {
         let row = [];
         for (let j = 0; j < this.colCount; j++) {
-          console.log(i, j);
           row.push({...this.cellTemplate});
         }   
         this.table.push(row);    
       }
+      console.log(this.table);
+    },
+    changeCellTimestamp(i, j) {
+      let cell = this.table[i][j];
+      // 
+      if (! cell.lastChanged) {
+        cell.firstChanged = new Date();
+      }
+      cell.lastChanged = new Date();
+      // 
+      this.setTime();
+    },
+    // 
+    setTime() {
+      let count = this.countEmptyCells();
+      console.log(count, this.rowCount * this.colCount);
+      if (count == this.rowCount * this.colCount-1) {
+        this.setStartTime();
+        
+      }
+      if (count == 0) {
+        this.setEndTime();
+      }
+
     },
     setStartTime() {
+      console.log("setStartTime");
       this.startedAtDateTime = new Date();
     },
     setEndTime() {
+      console.log("setEndTime");
       this.endedAtDateTime = new Date();
       this.isEverythingInputed = true;
     },
     //
-    getMessage() {
-      axios
-        .get("/")
-        .then((res) => {
-          this.msg = res.data;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+    sendData() {
+      if (this.isEverythingInputed) {
+        axios
+          .post("/")
+          .then((res) => {
+            this.msg = res.data;
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+      }
+
+    },
+    // 
+    countEmptyCells() {
+      return this.table.reduce((b, c)=> (b + (c.reduce((b1, c1)=>b1 + (c1.value == "" ? 1:0),0))), 0);
+    },
+    createTMessage(initTime, changedTime) {
+      return `добавлено в ${initTime? initTime.toLocaleTimeString(): 'N/A'},изменено в ${changedTime? changedTime.toLocaleTimeString(): 'N/A'}`;
     },
   },
   //
@@ -158,4 +201,8 @@ export default {
 </script>
 <style>
 .help {cursor: help;}
+
+td input:not(:placeholder-shown) {
+  border-color: lightgreen;
+}
 </style>
