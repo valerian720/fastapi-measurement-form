@@ -1,18 +1,17 @@
 <template>
   <div>
-    ReportView
-    <!-- <MeasurementForm/> -->
+    <MeasurmentReportTable/>
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-// import MeasurementForm from "@/components/MeasurementForm.vue";
+import MeasurmentReportTable from "@/components/MeasurmentReportTable.vue";
 
 export default {
   name: "ReportView",
   components: {
-    // MeasurementForm,
+    MeasurmentReportTable,
   },
 };
 </script>
