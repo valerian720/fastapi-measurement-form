@@ -94,10 +94,16 @@ def read_all_measurements(skip: int = 0, limit: int = 100, db: Session = Depends
     titles = crud.get_measurments(db=db, skip=skip, limit=limit)
     return titles
 
-@app.post("/v1/measurements/", response_model=schemas.Measurment)
+@app.post("/v1/measurements/", response_model=List[schemas.Measurment])
+def create_measurements(measurments: List[schemas.MeasurmentCreate], db: Session = Depends(get_db)):
+    ret = []
+    for measurment in measurments:
+        ret.append(crud.create_measurment(db=db, measurment=measurment))
+    return ret
+
+@app.post("/v1/measurement/", response_model=schemas.Measurment)
 def create_measurements(measurment: schemas.MeasurmentCreate, db: Session = Depends(get_db)):
     return crud.create_measurment(db=db, measurment=measurment)
-
 
 # @app.get("/users/{user_id}", response_model=schemas.User)
 # def read_user(user_id: int, db: Session = Depends(get_db), current_user: schemas.User = Depends(get_current_user_from_token)):

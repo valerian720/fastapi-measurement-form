@@ -4,7 +4,8 @@
       <div class="card text-start">
         <div class="card-body">
           <h4 class="card-title">Ввод замеров</h4>
-          <div class="col m-1 p-1 help" title="Начните вводить данные / полностью окончите вводить данные для того что бы все пропуски сами заполнились">
+          <div class="col m-1 p-1 help"
+            title="Начните вводить данные / полностью окончите вводить данные для того что бы все пропуски сами заполнились">
             Дата измерений:
             <u v-if="startedAtDateTime">{{
               startedAtDateTime.toLocaleDateString()
@@ -24,11 +25,7 @@
             <div class="col-2 m-1 p-1">Отделение:</div>
             <div class="col-2">
               <select class="form-select" v-model="selectedDepartment" aria-label="выберите отдел">
-                <option
-                  :value="department"
-                  v-for="(department, index) in departmentList"
-                  :key="index"
-                >
+                <option :value="department" v-for="(department, index) in departmentList" :key="index">
                   {{ department }}
                 </option>
               </select>
@@ -39,11 +36,7 @@
               <table class="table table-striped table-bordered">
                 <thead class="table-light">
                   <tr>
-                    <th
-                      scope="col"
-                      rowspan="2"
-                      class="align-middle text-center"
-                    >
+                    <th scope="col" rowspan="2" class="align-middle text-center">
                       № клапана полива
                     </th>
                     <th scope="col" colspan="3">Капельница</th>
@@ -63,16 +56,11 @@
                 </thead>
                 <tbody>
                   <tr v-for="(row, rowIndex) in table" v-bind:key="rowIndex">
-                    <td scope="row" class="text-end">{{ rowIndex+1 }}</td>
+                    <td scope="row" class="text-end">{{ rowIndex + 1 }}</td>
                     <td v-for="(cell, cellIndex) in row" v-bind:key="cellIndex">
-                          <input v-model="cell.value" @change="changeCellTimestamp(rowIndex, cellIndex)"
-                           min="0.01" 
-                           max="10" 
-                           step="0.01" 
-                           type="number" 
-                           class="form-control cell" 
-                           :title="createTMessage(cell.firstChanged, cell.lastChanged)"
-                           placeholder="x.xx">
+                      <input v-model="cell.value" @change="changeCellTimestamp(rowIndex, cellIndex)" min="0.01" max="10"
+                        step="0.01" type="number" class="form-control cell"
+                        :title="createTMessage(cell.firstChanged, cell.lastChanged)" placeholder="x.xx">
                     </td>
                   </tr>
                 </tbody>
@@ -80,24 +68,26 @@
             </div>
             <div class="mb-3">
               <label for="" class="form-label">Измерения выполнил: </label>
-              <input
-                type="text"
-                class="form-control"
-                name="responsible"
-                aria-describedby="helpId"
-                placeholder=""
-                v-model="responsible"
-              />
-              <small id="helpId" class="form-text text-muted"
-                >Фамилия имя</small
-              >
+              <input type="text" class="form-control" name="responsible" aria-describedby="helpId" placeholder=""
+                v-model="responsible" />
+              <small id="helpId" class="form-text text-muted">Фамилия имя</small>
             </div>
             <div class="row">
-              <button type="button" class="btn btn-outline-primary col-2 mx-auto">сохранить</button>
+              <button type="button" class="btn btn-outline-primary col-2 mx-auto" @click="sendData()"
+              :disabled="!isEverythingInputed && canSave"
+              >сохранить</button>
             </div>
           </div>
         </div>
       </div>
+    </div>
+    <div class="alert alert-success " v-if="isSuccess" role="alert" @click="isSuccess = false">
+      <h4 class="alert-heading">Сохранено</h4>
+      <p>Введенные данные были успешно сохранены</p>
+    </div>
+    <div class="alert alert-danger"  v-if="isError" role="alert" @click="isError = false">
+      <h4 class="alert-heading">Ошибка</h4>
+      <p>Данные не были сохранены, попробуйте позднее или свяжитесь со специалистом</p>
     </div>
   </div>
 </template>
@@ -113,49 +103,61 @@ export default {
       rowCount: 6,
       colCount: 8,
       // 
-      responsible: "",
+      // responsible: "",
+      responsible: "Иванов Василий",
       selectedDepartment: "1.1",
       //
       isEverythingInputed: false,
+      canSave: true,
       //
-      cellTemplate: { value: "", firstChanged: null, lastChanged: null },
+      // cellTemplate: { value: "", firstChanged: null, lastChanged: null },
+      cellTemplate: { value: "1", firstChanged: new Date(), lastChanged: new Date() },
       //
-      startedAtDateTime: null,
-      endedAtDateTime: null,
+      // startedAtDateTime: null,
+      // endedAtDateTime: null,
+      startedAtDateTime: new Date(),
+      endedAtDateTime: new Date(),
+
       departmentList: ["1.1", "1.2", "1.4", "1.5"],
 
       //
       msg: "",
+      // 
+      isSuccess: false,
+      isError: false,
     };
   },
   methods: {
+    hidePopups() {
+      this.isSuccess = false;
+      this.isError = false;
+    },
     populateTable() {
       for (let i = 0; i < this.rowCount; i++) {
         let row = [];
         for (let j = 0; j < this.colCount; j++) {
-          row.push({...this.cellTemplate});
-        }   
-        this.table.push(row);    
+          row.push({ ...this.cellTemplate });
+        }
+        this.table.push(row);
       }
-      console.log(this.table);
     },
     changeCellTimestamp(i, j) {
       let cell = this.table[i][j];
       // 
-      if (! cell.lastChanged) {
+      if (!cell.lastChanged) {
         cell.firstChanged = new Date();
       }
       cell.lastChanged = new Date();
       // 
       this.setTime();
+      this.hidePopups();
     },
     // 
     setTime() {
       let count = this.countEmptyCells();
-      console.log(count, this.rowCount * this.colCount);
-      if (count == this.rowCount * this.colCount-1) {
+      if (count == this.rowCount * this.colCount - 1) {
         this.setStartTime();
-        
+
       }
       if (count == 0) {
         this.setEndTime();
@@ -163,34 +165,69 @@ export default {
 
     },
     setStartTime() {
-      console.log("setStartTime");
       this.startedAtDateTime = new Date();
     },
     setEndTime() {
-      console.log("setEndTime");
       this.endedAtDateTime = new Date();
       this.isEverythingInputed = true;
     },
     //
     sendData() {
-      if (this.isEverythingInputed) {
+      if (this.isEverythingInputed && this.canSave) {
+        console.log("sending data");
+        let postData = [];
+        // convert data rom diiferent elements on form to objects 
+        let template = {
+          valve_number: -1,
+          start_date: this.startedAtDateTime.toISOString(),
+          end_date: this.endedAtDateTime.toISOString(),
+          responsible: this.responsible,
+          dripper_volume: 0,
+          dripper_ec: 0,
+          dripper_ph: 0,
+          drain_volume: 0,
+          drain_ec: 0,
+          drain_ph: 0,
+          mat_ec: 0,
+          mat_ph: 0
+        };
+        for (let rowIndex = 0; rowIndex < this.rowCount; rowIndex++) {
+          let curRow = this.table[rowIndex];
+          let curObject = { ...template };
+          curObject.valve_number = `${rowIndex+1}`;
+          // pass data from row
+          [ curObject.dripper_volume, 
+          curObject.dripper_ec, 
+          curObject.dripper_ph, 
+          curObject.drain_volume, 
+          curObject.drain_ec, 
+          curObject.drain_ph, 
+          curObject.mat_ec, 
+          curObject.mat_ph ] = curRow.map((v) => v.value);
+          // 
+          postData.push(curObject);
+        }
+        // 
         axios
-          .post("/")
+          .post("/v1/measurements/", postData)
           .then((res) => {
-            this.msg = res.data;
+            console.log(res.data);
+            this.isSuccess = true;
+            this.canSave = false;
           })
           .catch((error) => {
             console.error(error);
+            this.isError = true;
           });
       }
 
     },
     // 
     countEmptyCells() {
-      return this.table.reduce((b, c)=> (b + (c.reduce((b1, c1)=>b1 + (c1.value == "" ? 1:0),0))), 0);
+      return this.table.reduce((b, c) => (b + (c.reduce((b1, c1) => b1 + (c1.value == "" ? 1 : 0), 0))), 0);
     },
     createTMessage(initTime, changedTime) {
-      return `добавлено в ${initTime? initTime.toLocaleTimeString(): 'N/A'},изменено в ${changedTime? changedTime.toLocaleTimeString(): 'N/A'}`;
+      return `добавлено в ${initTime ? initTime.toLocaleTimeString() : 'N/A'},изменено в ${changedTime ? changedTime.toLocaleTimeString() : 'N/A'}`;
     },
   },
   //
@@ -200,7 +237,9 @@ export default {
 };
 </script>
 <style>
-.help {cursor: help;}
+.help {
+  cursor: help;
+}
 
 td input:not(:placeholder-shown) {
   border-color: lightgreen;
