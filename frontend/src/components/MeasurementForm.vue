@@ -68,9 +68,9 @@
             </div>
             <div class="mb-3">
               <label for="" class="form-label">Измерения выполнил: </label>
-              <input type="text" class="form-control" name="responsible" aria-describedby="helpId" placeholder=""
+              <input type="text" required class="form-control" name="responsible" aria-describedby="helpId" placeholder=""
                 v-model="responsible" />
-              <small id="helpId" class="form-text text-muted">Фамилия имя</small>
+              <small id="helpId" class="form-text text-muted">Фамилия имя*</small>
             </div>
             <div class="row">
               <button type="button" class="btn btn-outline-primary col-2 mx-auto" @click="sendData()"
@@ -103,20 +103,16 @@ export default {
       rowCount: 6,
       colCount: 8,
       // 
-      // responsible: "",
-      responsible: "Иванов Василий",
+      responsible: "",
       selectedDepartment: "1.1",
       //
       isEverythingInputed: false,
       canSave: true,
       //
-      // cellTemplate: { value: "", firstChanged: null, lastChanged: null },
-      cellTemplate: { value: "1", firstChanged: new Date(), lastChanged: new Date() },
+      cellTemplate: { value: "", firstChanged: null, lastChanged: null },
       //
-      // startedAtDateTime: null,
-      // endedAtDateTime: null,
-      startedAtDateTime: new Date(),
-      endedAtDateTime: new Date(),
+      startedAtDateTime: null,
+      endedAtDateTime: null,
 
       departmentList: ["1.1", "1.2", "1.4", "1.5"],
 
