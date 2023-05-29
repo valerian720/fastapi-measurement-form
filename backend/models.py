@@ -40,6 +40,7 @@ class Measurment(Base): # crude implementation # TODO
     start_date = Column(DateTime)
     end_date = Column(DateTime)
     responsible = Column(String(100))
+    department = Column(String(100))
     # 
     dripper_volume = Column(Float)
     dripper_ec = Column(Float)

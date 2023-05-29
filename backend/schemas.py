@@ -9,6 +9,7 @@ class MeasurmentBase(BaseModel):
     start_date: datetime
     end_date: datetime
     responsible: str
+    department: str
     dripper_volume: float
     dripper_ec: float
     dripper_ph: float

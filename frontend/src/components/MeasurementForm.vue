@@ -182,6 +182,7 @@ export default {
           start_date: this.startedAtDateTime.toISOString(),
           end_date: this.endedAtDateTime.toISOString(),
           responsible: this.responsible,
+          department: this.selectedDepartment,
           dripper_volume: 0,
           dripper_ec: 0,
           dripper_ph: 0,
